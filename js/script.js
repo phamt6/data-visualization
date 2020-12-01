@@ -30,7 +30,6 @@ site.bar = (() => {
 
         const xAxis = g => g
             .attr('transform', `translate(0, ${height - margin.bottom})`)
-            .attr('class', 'rotate')
             .attr('font-size', '20px')
             .call(d3.axisBottom(x).tickFormat(i => data[i].country))
 
@@ -60,7 +59,11 @@ site.bar = (() => {
             .attr('width', x.bandwidth())
 
         svg.node();
-        svg.append('g').call(xAxis);
+        svg
+            .append('g')
+            .call(xAxis)
+            .selectAll('text')
+            .attr('transform', 'rotate(90)');
 
     };
 
