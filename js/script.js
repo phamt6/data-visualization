@@ -3,6 +3,8 @@ site = {};
 site.utils = (() => {
     let data = null;
     let extractedData = {};
+    let timer = null;
+    let yearBtn = null;
 
     const _getFromYear = year => {
         if (extractedData[year].length === 0) {
@@ -13,10 +15,10 @@ site.utils = (() => {
     }
 
     const _createSelector = y => {
-        const el = document.createElement('div');
+        const el = document.createElement('span');
         el.innerHTML = `
             <input type="radio" id="${y}" name="year" value="${y}">
-            <label for="${y}">${y}</label><br>
+            <label for="${y}">${y}</label>
         `;
         return el;
     }
