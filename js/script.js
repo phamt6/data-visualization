@@ -29,13 +29,17 @@ site.bar = (() => {
         const margin = { top: 50, left: 50, right: 50, bottom: 50 };
 
         const xAxis = g => g
-            .attr('transform', `translate(0, ${height - margin.bottom})`)
+            .attr('transform', `translate(12, ${height})`)
             .attr('font-size', '20px')
-            .call(d3.axisBottom(x).tickFormat(i => data[i].country))
+            .call(
+                d3.axisBottom(x)
+                    .tickSize(0)
+                    .tickFormat(i => data[i].country)
+            );
 
         const svg = d3.select('#barChart')
             .append('svg')
-            .attr('height', height)
+            .attr('height', height + margin.bottom)
             .attr('width', width);
 
         const x = d3.scaleBand()
@@ -59,12 +63,12 @@ site.bar = (() => {
             .attr('width', x.bandwidth())
 
         svg.node();
+
         svg
             .append('g')
             .call(xAxis)
             .selectAll('text')
-            .attr('transform', 'rotate(90)');
-
+            .attr('class', 'bar_label');
     };
 
     const init = y => {
@@ -97,7 +101,7 @@ site.scatter = (() => {
             .enter()
             .append('circle')
             .attr('r', d => d.population / (10 ** 6) / 10)
-            .attr('cy', d => d.life_exp * 10)
+            .attr('cy', d => d.life_exp * 15)
             .attr('cx', d => d.gdp_cap / 30)
             .attr('fill', 'royalblue')
             .attr('opacity', '0.5');
@@ -108,7 +112,7 @@ site.scatter = (() => {
             .enter()
             .append('text')
             .text(d => d.country)
-            .attr('y', d => d.life_exp * 10)
+            .attr('y', d => d.life_exp * 15)
             .attr('x', d => d.gdp_cap / 30)
             .attr('font-size', '11px')
             .attr('fill', 'red');
