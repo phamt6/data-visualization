@@ -2,14 +2,42 @@ site = {};
 
 site.utils = (() => {
     let data = null;
+    let extractedData = {};
 
-    const getData = () => {
-        if (data) { return Promise.resolve(data); }
+    const _getFromYear = year => {
+        if (extractedData[year].length === 0) {
+            extractedData[year] = data.filter(d => Number(d.year) === year)
+        }
+
+        return extractedData[year];
+    }
+
+    const _createSelector = y => {
+        const el = document.createElement('div');
+        el.innerHTML = `
+            <input type="radio" id="${y}" name="year" value="${y}">
+            <label for="${y}">${y}</label><br>
+        `;
+        return el;
+    }
+
+    const _recordYear = () => {
+        data.forEach(d => {
+            if (!extractedData[d.year]) {
+                extractedData[d.year] = [];
+                document.getElementById('year_selector').appendChild(_createSelector(d.year));
+            }
+        })
+    }
+
+    const getData = (year = 1952) => {
+        if (data) { return Promise.resolve(_getFromYear(year)); }
         else {
-            return d3.csv('https://phamt6.github.io/data/gapminder.csv')
+            return d3.csv('https://phamt6.github.io/data/gapminder_full.csv')
                 .then(d => {
                     data = d;
-                    return data;
+                    _recordYear();
+                    return _getFromYear(year);
                 });
         }
     }
@@ -29,7 +57,7 @@ site.bar = (() => {
         const margin = { top: 50, left: 50, right: 50, bottom: 50 };
 
         const xAxis = g => g
-            .attr('transform', `translate(12, ${height})`)
+            .attr('transform', `translate(7, ${height})`)
             .attr('font-size', '20px')
             .call(
                 d3.axisBottom(x)
@@ -75,7 +103,7 @@ site.bar = (() => {
         year = y;
         document.getElementById('barChart').innerHTML = '';
 
-        site.utils.getData()
+        site.utils.getData(y)
             .then(createBarChart);
     }
 
@@ -120,8 +148,9 @@ site.scatter = (() => {
         svg.node();
     }
 
-    const init = () => {
-        site.utils.getData()
+    const init = y => {
+        document.getElementById('scatter').innerHTML = '';
+        site.utils.getData(y)
             .then(createScatter);
     }
 
@@ -129,6 +158,12 @@ site.scatter = (() => {
         init
     }
 })();
+
+document.addEventListener('change', e => {
+    const selectedYear = Number(e.target.value);
+    site.bar.init(selectedYear);
+    site.scatter.init(selectedYear);
+})
 
 site.bar.init();
 site.scatter.init();
