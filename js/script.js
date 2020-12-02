@@ -116,8 +116,8 @@ site.bar = (() => {
 
 site.scatter = (() => {
     const createScatter = data => {
-        const height = 2000;
-        const width = 2000;
+        const height = 1000;
+        const width = 1000;
         const margin = { top: 50, left: 50, right: 50, bottom: 50 };
 
         const svg = d3.select('#scatter')
@@ -125,14 +125,25 @@ site.scatter = (() => {
             .attr('height', height)
             .attr('width', width);
 
+        const MAX_LIFE_EXP = d3.max(data, d => d.life_exp);
+        const MAX_GDP_CAP = d3.max(data, d => d.gdp_cap);
+
+        const y = d3.scaleLinear()
+            .domain([0, MAX_LIFE_EXP])
+            .range([height - margin.bottom, margin.top])
+
+        const x = d3.scaleLinear()
+            .domain([0, MAX_GDP_CAP])
+            .range([margin.left, width - margin.right])
+
         svg
             .selectAll('circle')
             .data(data)
             .enter()
             .append('circle')
-            .attr('r', d => d.population / (10 ** 6) / 10)
-            .attr('cy', d => d.life_exp * 15)
-            .attr('cx', d => d.gdp_cap / 30)
+            .attr('r', d => d.population / (10 ** 6) / 5)
+            .attr('cy', d => y(d.life_exp))
+            .attr('cx', d => x(d.gdp_cap))
             .attr('fill', 'royalblue')
             .attr('opacity', '0.5');
 
@@ -142,8 +153,8 @@ site.scatter = (() => {
             .enter()
             .append('text')
             .text(d => d.country)
-            .attr('y', d => d.life_exp * 15)
-            .attr('x', d => d.gdp_cap / 30)
+            .attr('y', d => y(d.life_exp))
+            .attr('x', d => x(d.gdp_cap))
             .attr('font-size', '11px')
             .attr('fill', 'red');
 
@@ -163,11 +174,11 @@ site.scatter = (() => {
 
 document.addEventListener('change', e => {
     const selectedYear = Number(e.target.value);
-    site.bar.init(selectedYear);
+    // site.bar.init(selectedYear);
     site.scatter.init(selectedYear);
 })
 
-site.bar.init();
+// site.bar.init();
 site.scatter.init();
 
 
