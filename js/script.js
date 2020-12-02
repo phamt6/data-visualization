@@ -1,6 +1,7 @@
 site = {};
 
 site.utils = (() => {
+    const DATA_URL = 'https://phamt6.github.io/data/gapminder_full.csv';
     let data = null;
     let extractedData = {};
     let timer = null;
@@ -43,6 +44,8 @@ site.utils = (() => {
     }
 
     const startAutomation = () => {
+        if (timer) return;
+
         timer = setInterval(() => {
             document.querySelector(`#year_${_getNextYear()}`).click();
         }, 1000);
@@ -50,12 +53,13 @@ site.utils = (() => {
 
     const stopAutomation = () => {
         clearInterval(timer);
+        timer = null;
     }
 
     const getData = (year = 1952) => {
         if (data) { return Promise.resolve(_getFromYear(year)); }
         else {
-            return d3.csv('https://phamt6.github.io/data/gapminder_full.csv')
+            return d3.csv(DATA_URL)
                 .then(d => {
                     data = d;
                     _recordYear();
@@ -196,14 +200,14 @@ site.scatter = (() => {
 
 document.addEventListener('change', e => {
     const selectedYear = Number(e.target.value);
-    // site.bar.init(selectedYear);
+    site.bar.init(selectedYear);
     site.scatter.init(selectedYear);
 });
 
 document.getElementById('animate-btn').addEventListener('click', site.utils.startAutomation);
 document.getElementById('stop-btn').addEventListener('click', site.utils.stopAutomation);
 
-// site.bar.init();
+site.bar.init();
 site.scatter.init();
 
 
