@@ -17,7 +17,7 @@ site.utils = (() => {
     const _createSelector = y => {
         const el = document.createElement('span');
         el.innerHTML = `
-            <input type="radio" id="${y}" name="year" value="${y}">
+            <input type="radio" id="year_${y}" name="year" value="${y}">
             <label for="${y}">${y}</label>
         `;
         return el;
@@ -30,6 +30,26 @@ site.utils = (() => {
                 document.getElementById('year_selector').appendChild(_createSelector(d.year));
             }
         })
+
+        document.querySelector('[name="year"]').checked = 'checked';
+    }
+
+    const _getNextYear = () => {
+        const _years = Object.keys(extractedData);
+        const _currentYear = document.querySelector('input[type="radio"]:checked').value;
+        const _currentYearIndex = _years.indexOf(_currentYear);
+        const _nextYearIndex = _currentYearIndex === (_years.length - 1) ? 0 : _currentYearIndex + 1;
+        return _years[_nextYearIndex];
+    }
+
+    const startAutomation = () => {
+        timer = setInterval(() => {
+            document.querySelector(`#year_${_getNextYear()}`).click();
+        }, 1000);
+    }
+
+    const stopAutomation = () => {
+        clearInterval(timer);
     }
 
     const getData = (year = 1952) => {
@@ -45,7 +65,9 @@ site.utils = (() => {
     }
 
     return {
-        getData
+        getData,
+        startAutomation,
+        stopAutomation
     }
 })();
 
@@ -176,9 +198,13 @@ document.addEventListener('change', e => {
     const selectedYear = Number(e.target.value);
     // site.bar.init(selectedYear);
     site.scatter.init(selectedYear);
-})
+});
+
+document.getElementById('animate-btn').addEventListener('click', site.utils.startAutomation);
+document.getElementById('stop-btn').addEventListener('click', site.utils.stopAutomation);
 
 // site.bar.init();
 site.scatter.init();
+
 
 
