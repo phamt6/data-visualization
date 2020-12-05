@@ -12,12 +12,26 @@
 <body>
     <button id="animate-btn">Animate</button>
     <button id="stop-btn">Stop</button>
-    
+
     <div id="year_selector">
     </div>
+
+    <h2>Bar Chart</h2>
     <div id="barChart"></div>
+
+    <h2>Scatter Plot</h2>
     <div id="scatter"></div>
+
+    <h2>Free of choice Chart - Bubble Map with GeoJSON</h2>
+    <div id="mapChart"></div>
     <script src="https://d3js.org/d3.v5.js"></script>
-    <script src="js/script.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+    <script src="js/site.utils.js"></script>
+    <script src="js/site.bar.js"></script>
+    <script src="js/site.scatter.js"></script>
+    <script src="js/site.map.js"></script>
+    <script src="js/site.init.js"></script>
 </body>
 </html>
